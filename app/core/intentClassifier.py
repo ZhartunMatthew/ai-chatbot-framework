@@ -3,10 +3,10 @@ from app.commons.validations import isListEmpty
 from app.stories.models import Story
 from app import app
 
+
 class IntentClassifier(object):
     def __init__(self):
-        self.PATH = "{}/{}".format(app.config["MODELS_DIR"],
-                                   app.config["INTENT_MODEL_NAME"])
+        self.PATH = "{}/{}".format(app.config["MODELS_DIR"], app.config["INTENT_MODEL_NAME"])
 
     def train(self):
         stories = Story.objects
@@ -34,15 +34,12 @@ class IntentClassifier(object):
                 else:
                     lq = token[0]
             trainFeatures.append(lq)
-        sentenceClassifer.train(trainFeatures,
-                                trainLabels,
-                                outpath=self.PATH, verbose=False)
+        sentenceClassifer.train(trainFeatures, trainLabels, outpath=self.PATH, verbose=False)
         return True
 
     def predict(self, sentence):
         predicted = sentenceClassifer.predict(sentence, self.PATH)
         if not predicted:
-            return  Story.objects(
-                intentName=app.config["DEFAULT_FALLBACK_INTENT_NAME"]).first().id
+            return Story.objects(intentName=app.config["DEFAULT_FALLBACK_INTENT_NAME"]).first().id
         else:
             return predicted["class"]

@@ -1,23 +1,20 @@
 import string
-
 from nltk.corpus import stopwords as sw
 from nltk.corpus import wordnet as wn
 from nltk import wordpunct_tokenize
 from nltk import WordNetLemmatizer
 from nltk import sent_tokenize
 from nltk import pos_tag
-
 from sklearn.base import BaseEstimator, TransformerMixin
-
+import pymorphy2
 
 class NLTKPreprocessor(BaseEstimator, TransformerMixin):
 
-    def __init__(self, stopwords=None, punct=None,
-                 lower=True, strip=True):
-        self.lower      = lower
-        self.strip      = strip
-        #self.stopwords  = stopwords or set(sw.words('english'))
-        self.punct      = punct or set(string.punctuation)
+    def __init__(self, stopwords=None, punct=None, lower=True, strip=True):
+        self.lower = lower
+        self.strip = strip
+        # self.stopwords  = stopwords or set(sw.words('english'))
+        self.punct = punct or set(string.punctuation)
         self.lemmatizer = WordNetLemmatizer()
 
     def fit(self, X, y=None):
@@ -27,15 +24,16 @@ class NLTKPreprocessor(BaseEstimator, TransformerMixin):
         return [" ".join(doc) for doc in X]
 
     def transform(self, X):
-        return [
-            list(self.tokenize(doc)) for doc in X
-        ]
+        result = [list(self.tokenize(doc)) for doc in X]
+        print('Result: ', result)
+        return result
 
     def tokenize(self, document):
+        print('Chat input: ', document)
         # Break the document into sentences
-        for sent in sent_tokenize(document):
+        for sent in sent_tokenize(document, language='russian'):
             # Break the sentence into part of speech tagged tokens
-            for token, tag in pos_tag(wordpunct_tokenize(sent)):
+            for token, _ in pos_tag(wordpunct_tokenize(sent)):
                 # Apply preprocessing to the token
                 token = token.lower() if self.lower else token
                 token = token.strip() if self.strip else token
@@ -51,15 +49,10 @@ class NLTKPreprocessor(BaseEstimator, TransformerMixin):
                     continue
 
                 # Lemmatize the token and yield
-                lemma = self.lemmatize(token, tag)
+                lemma = self.lemmatize(token)
                 yield lemma
 
-    def lemmatize(self, token, tag):
-        tag = {
-            'N': wn.NOUN,
-            'V': wn.VERB,
-            'R': wn.ADV,
-            'J': wn.ADJ
-        }.get(tag[0], wn.NOUN)
-
-        return self.lemmatizer.lemmatize(token, tag)
+    def lemmatize(self, token):
+        p = pymorphy2.MorphAnalyzer().parse(token)
+        print(p)
+        return p[0].normal_form

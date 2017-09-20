@@ -72,10 +72,10 @@ def extractLabels(predictedLabels):
 
 
 def predict(storyId, sentence):
-    tokenizedSentence = word_tokenize(sentence)
+    tokenizedSentence = word_tokenize(sentence, language='russian')
     taggedToken = posTagger(sentence)
     tagger = pycrfsuite.Tagger()
-    tagger.open("{}/{}.model".format(app.config["MODELS_DIR"],storyId))
+    tagger.open("{}/{}.model".format(app.config["MODELS_DIR"], storyId))
     predictedLabels = tagger.tag(sentToFeatures(taggedToken))
     extractedEntities = extractEntities(zip(tokenizedSentence, predictedLabels))
     return extractedEntities

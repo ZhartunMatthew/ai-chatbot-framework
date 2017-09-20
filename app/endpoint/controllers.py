@@ -5,7 +5,7 @@ import requests
 
 from jinja2 import Undefined, Template
 
-from flask import Blueprint,request, send_file,abort
+from flask import Blueprint, request, send_file, abort
 from app import app
 
 from app.commons import errorCodes
@@ -31,8 +31,8 @@ class SilentUndefined(Undefined):
 endpoint = Blueprint('api', __name__, url_prefix='/api')
 
 
-def callApi(url, type, parameters,isJson=False):
-    print(url,type,parameters,isJson)
+def callApi(url, type, parameters, isJson=False):
+    print(url, type, parameters, isJson)
 
     if "GET" in type:
         if isJson:
@@ -72,8 +72,8 @@ def api():
         context["context"] = requestJson["context"]
 
         if app.config["DEFAULT_WELCOME_INTENT_NAME"] in requestJson.get("input"):
-            story=Story.objects(
-                intentName=app.config["DEFAULT_WELCOME_INTENT_NAME"]).first()
+            story = Story.objects(intentName=app.config["DEFAULT_WELCOME_INTENT_NAME"]).first()
+
             resultJson["complete"] = True
             resultJson["intent"]["name"] = story.storyName
             resultJson["intent"]["storyId"] = str(story.id)
@@ -84,10 +84,10 @@ def api():
             logger.info(requestJson.get("input"), extra=resultJson)
             return buildResponse.buildJson(resultJson)
 
+        print('User input: ', requestJson.get("input"))
         intentClassifier = IntentClassifier()
         storyId = intentClassifier.predict(requestJson.get("input"))
         story = Story.objects.get(id=ObjectId(storyId))
-
 
         if story.parameters:
             parameters = story.parameters
@@ -101,9 +101,7 @@ def api():
             }
 
             if parameters:
-                extractedParameters = sequenceLabeler.predict(storyId,
-                                                              requestJson.get("input")
-                                                              )
+                extractedParameters = sequenceLabeler.predict(storyId, requestJson.get("input"))
                 missingParameters = []
                 resultJson["missingParameters"] = []
                 resultJson["extractedParameters"] = {}
@@ -144,10 +142,7 @@ def api():
                                 requestTemplate = Template(story.apiDetails.jsonData, undefined=SilentUndefined)
                                 parameters = requestTemplate.render(**context)
 
-                            result = callApi(renderedUrl,
-                                             story.apiDetails.requestType,
-                                             parameters,isJson)
-
+                            result = callApi(renderedUrl, story.apiDetails.requestType, parameters, isJson)
                         else:
                             result = {}
 
@@ -162,8 +157,7 @@ def api():
                 resultTemplate = Template(story.speechResponse, undefined=SilentUndefined)
                 resultJson["speechResponse"] = resultTemplate.render(**context)
 
-
-        elif (requestJson.get("complete") is False):
+        elif requestJson.get("complete") is False:
             if "cancel" not in story.intentName:
                 storyId = requestJson["intent"]["storyId"]
                 story = Story.objects.get(id=ObjectId(storyId))
@@ -190,7 +184,7 @@ def api():
 
                             result = callApi(renderedUrl,
                                              story.apiDetails.requestType,
-                                             parameters,isJson)
+                                             parameters, isJson)
                             print(result)
                         else:
                             result = {}
@@ -219,10 +213,6 @@ def api():
         return buildResponse.buildJson(resultJson)
     else:
         return abort(400)
-
-
-
-
 
 # Text To Speech
 @endpoint.route('/tts')

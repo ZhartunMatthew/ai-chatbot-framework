@@ -22,7 +22,7 @@ def sentenceTokenize():
     result = nlp.sentenceTokenize(sentences)
     return buildResponse.sentPlainText(result)
 
-
+# start labeling button
 @core.route('/posTagAndLabel', methods=['POST'])
 def posTagAndLabel():
     sentences = request.form['sentences']

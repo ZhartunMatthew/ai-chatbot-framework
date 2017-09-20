@@ -7,8 +7,8 @@ from app.stories.models import Story,LabeledSentences
 train = Blueprint('train_blueprint', __name__,
                   url_prefix='/train',
                   template_folder='templates',
-                  static_folder='static'
-                  )
+                  static_folder='static')
+
 
 @train.route('/<storyId>', methods=['GET'])
 def home(storyId):
@@ -26,8 +26,9 @@ def home(storyId):
 def insertLabeledSentence():
     story = Story.objects.get(id=ObjectId(request.form['storyId']))
     labeledSentence = LabeledSentences()
-    print(ast.literal_eval(request.form['labeledSentence']))
+    print('Add labeled sentence to story: ', ast.literal_eval(request.form['labeledSentence']))
     labeledSentence.data = ast.literal_eval(request.form['labeledSentence'])
+
     story.labeledSentences.append(labeledSentence)
     try:
         story.save()

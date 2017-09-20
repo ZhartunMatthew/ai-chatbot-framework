@@ -9,6 +9,7 @@ $(document).ready(function() {
 				},
 				function(data) {
 					NS.taggedSentences = data;
+					console.log(NS.taggedSentences)
 					$('#output').html("<pre>" + JSON.stringify(data) + "</pre>");
 				});
 			$("#tokenLabel").prop('disabled', false);
@@ -103,8 +104,9 @@ $(document).ready(function() {
 		}
 	});
 
-	$("#btnInsertLabeledSentence").click(function()
-	{
+	$("#btnInsertLabeledSentence").click(function() {
+	    console.log('Send labeled sentence to server');
+	    console.log('Sentence', NS.taggedSentences);
 		$.post("/train/insertLabeledSentence", {
 				storyId: $("input[name=storyId]").val(),
 				labeledSentence: JSON.stringify(NS.taggedSentences)
@@ -138,11 +140,10 @@ $(document).ready(function() {
 		_id = $(this).attr("objId");
 		$.post("/core/buildModel/"+_id, {},
 			function(data) {
-				 if(data.errorCode)
-                {
+			    console.log('Train model data: ', data)
+				if(data.errorCode) {
                     alert(data.description);
-                }else if (data.result)
-                {
+                } else if (data.result) {
                     alert("Build Sucessful!");
                 }
 			});

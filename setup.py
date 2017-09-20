@@ -1,44 +1,53 @@
 import nltk
 import os
+import traceback
 
 # Downloading necessary NLTK datasets
-nltk.download("stopwords")
-nltk.download("wordnet")
-nltk.download('averaged_perceptron_tagger')
-nltk.download('punkt')
+# nltk.download("stopwords")
+# nltk.download("wordnet")
+# nltk.download('averaged_perceptron_tagger')
+# nltk.download('punkt')
 
-#creating directory for storing chat logs
+# russian setup
+# nltk.download("stopwords")
+# nltk.download("wordnet")
+# nltk.download('averaged_perceptron_tagger_ru')
+# nltk.download('punkt')
+
+# creating directory for storing chat logs
 if not os.path.exists("logs"):
     os.makedirs("logs")
 
 try:
     from app.stories.models import Story, LabeledSentences
 
+    Story.drop_collection()
+
     # Setting up default intents
     newStory = Story()
     newStory.storyName = 'Default Fallback intent'
     newStory.intentName = 'fallback'
-    newStory.speechResponse = "Sorry. I'm having trouble understanding you."
+    newStory.speechResponse = "Что-т пошло не так :("
     newStory.apiTrigger = False
     newLabeledSentence = LabeledSentences()
     newLabeledSentence.data = [['', 'VB', 'O']]
     newStory.labeledSentences.append(newLabeledSentence)
     newStory.save()
 
-    newStory = Story()
-    newStory.storyName = 'cancel'
-    newStory.intentName = 'cancel'
-    newStory.speechResponse = "Ok. Canceled."
-    newStory.apiTrigger = False
-    newLabeledSentence = LabeledSentences()
-    newLabeledSentence.data = [['cancel', 'VB', 'O'], ['close', 'VB', 'O']]
-    newStory.labeledSentences.append(newLabeledSentence)
-    newStory.save()
+    # newStory = Story()
+    # newStory.storyName = 'cancel'
+    # newStory.intentName = 'cancel'
+    # newStory.speechResponse = "Ok. Canceled."
+    # newStory.apiTrigger = False
+    # newLabeledSentence = LabeledSentences()
+    # newLabeledSentence.data = [['cancel', 'VB', 'O'], ['close', 'VB', 'O']]
+    # newStory.labeledSentences.append(newLabeledSentence)
+    # newStory.save()
 
     newStory = Story()
     newStory.storyName = 'Welcome message'
     newStory.intentName = 'init_conversation'
-    newStory.speechResponse = "Hi, What can i do for you ?"
+    newStory.speechResponse = "Дарова. Я твои помощник по бронированию!"
     newStory.apiTrigger = False
     newLabeledSentence = LabeledSentences()
     newLabeledSentence.data = [[
@@ -50,11 +59,12 @@ try:
     newStory.save()
 except:
     print("Stories already exists..skipping..")
-    
+
 try:
     print("Training models..")
     from app.core.intentClassifier import IntentClassifier
     IntentClassifier().train()
     print("Training models finished..")
-except:
+except Exception as ex:
+    traceback.print_exc()
     print("Could train models..")

@@ -1,4 +1,3 @@
-import os
 
 class Config(object):
     DEBUG = False
@@ -15,8 +14,10 @@ class Config(object):
     DEFAULT_FALLBACK_INTENT_NAME = "fallback"
     DEFAULT_WELCOME_INTENT_NAME = "init_conversation"
 
+
 class Development(Config):
     DEBUG = True
+
 
 class Production(Config):
     # MongoDB Database Details
