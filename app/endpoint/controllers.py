@@ -2,7 +2,7 @@ import os
 from bson import ObjectId
 import json
 import requests
-
+from pprint import pprint as pp
 from jinja2 import Undefined, Template
 
 from flask import Blueprint, request, send_file, abort
@@ -63,7 +63,10 @@ def callApi(url, type, parameters, isJson=False):
 # Request Handler
 @endpoint.route('/v1', methods=['POST'])
 def api():
-    requestJson = request.get_json(silent=True)
+
+    pp(request)
+    requestJson = request.get_json(silent=False)
+    print(requestJson)
     resultJson = requestJson
 
     if requestJson:

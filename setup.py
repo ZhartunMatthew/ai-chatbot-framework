@@ -8,9 +8,10 @@ import traceback
 # nltk.download('averaged_perceptron_tagger')
 # nltk.download('punkt')
 
-# russian setup
-# nltk.download("stopwords")
-# nltk.download("wordnet")
+# # russian setup
+# # nltk.download("stopwords")
+# # nltk.download("wordnet")
+# # rename folder 'averaged_perceptron_tagger_ru' to 'averaged_perceptron_tagger'
 # nltk.download('averaged_perceptron_tagger_ru')
 # nltk.download('punkt')
 
@@ -47,7 +48,7 @@ try:
     newStory = Story()
     newStory.storyName = 'Welcome message'
     newStory.intentName = 'init_conversation'
-    newStory.speechResponse = "Дарова. Я твои помощник по бронированию!"
+    newStory.speechResponse = "Дарова. Я твой помощник по бронированию!"
     newStory.apiTrigger = False
     newLabeledSentence = LabeledSentences()
     newLabeledSentence.data = [[

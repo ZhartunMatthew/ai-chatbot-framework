@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    talking = true;
+    talking = false;
 
     if (typeof(Storage) !== "undefined") {
         localStorage.setItem("firstname", "alfred");
